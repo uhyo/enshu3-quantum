@@ -43,13 +43,6 @@ for(let N = 1; N <= MAXN; N++){
     const iter = Math.max(4, 2*N);
 
     // Fieldを初期化
-
-    // 初期状態
-    const coeff = Map<State, Complex>().set(Map({
-        [STATE_DIR]: 0,
-        [STATE_POS]: 0,
-    }), cone) as ICoeff;
-
     const director = (d: Map<number, Complex>)=>{
         // Grover's diffusion operator.
         const result = Map<number, Complex>().asMutable();
@@ -70,6 +63,9 @@ for(let N = 1; N <= MAXN; N++){
         return v ^ (1 << a);
     };
     const f = new Field(director, transition);
+
+    // 初期状態
+    const coeff = Map<State, Complex>().set(f.makeState(0, 0), cone) as ICoeff;
 
     let cnt = 0;
     let steps = 0;

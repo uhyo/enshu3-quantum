@@ -27,12 +27,6 @@ const fs = require('fs');
 // 結果を出力するところ
 const OUTPATH = './data.txt';
 
-// 初期状態
-const coeff = Map<State, Complex>().set(Map({
-    [STATE_DIR]: 1,
-    [STATE_POS]: 0,
-}), cone) as ICoeff;
-
 //Hadamard operatorを左からかける（係数無視）
 const director = (d: Map<number, Complex>)=>{
     const dl = d.get(-1, czero);
@@ -53,6 +47,10 @@ const filestream = fs.createWriteStream(OUTPATH, {
 });
 
 const f = new Field(director, transition);
+
+// 初期状態
+const coeff = Map<State, Complex>().set(f.makeState(1, 0), cone) as ICoeff;
+
 
 // absorbing vertexが-20から20くらいまで
 const ms = [-20, -16, -12, -8, -4, -3, -2, -1, 1, 2, 3, 4, 5, 8, 12, 16, 20];

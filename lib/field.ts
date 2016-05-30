@@ -1,6 +1,7 @@
 // Particleが動くところ
 import {
     Map,
+    Record,
 } from 'immutable';
 import {
     Complex,
@@ -42,6 +43,14 @@ class Field {
         this.normalize(this.coeff);
     }
 
+    // state
+    public makeState(dir: number, pos:number): State{
+        return Map<string, number>({
+            [STATE_DIR]: dir,
+            [STATE_POS]: pos,
+        });
+    }
+
     // 1ステップ歩く
     public walk(): void{
         // 現在の状態
@@ -66,10 +75,7 @@ class Field {
             // d2のkeyの数だけ分離
             d2.forEach((ra: Complex, a: number)=>{
                 // 確率を追加
-                const k2 = Map<string, number>({
-                    [STATE_DIR]: a,
-                    [STATE_POS]: transition(a, v),
-                });
+                const k2 = this.makeState(a, transition(a, v));
                 const r2 = cmul(r, ra);
                 coeff2m.set(k2, cadd(r2, coeff2m.get(k2, czero)));
             });
