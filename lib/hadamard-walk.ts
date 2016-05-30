@@ -55,17 +55,18 @@ const filestream = fs.createWriteStream(OUTPATH, {
 const f = new Field(director, transition);
 
 // absorbing vertexが-20から20くらいまで
-for(let m=-20; m<=20; m++){
+const ms = [-20, -16, -12, -8, -4, -3, -2, -1, 1, 2, 3, 4, 5, 8, 12, 16, 20];
+for(let m of ms){
     console.log(`===== ${m} =====`);
 
     // 繰り返し回数
-    const iter = 40;
+    const iter = 1000;
     // 確率を求める
     let cnt = 0;
     for(let i=0; i<iter; i++){
         console.log(i);
         f.init(coeff);
-        if(f.test(m)){
+        if(f.test(m, 80) >= 0){
             cnt++;
         }
     }
@@ -75,4 +76,4 @@ for(let m=-20; m<=20; m++){
     console.log('%d: %d', m, p);
 }
 filestream.end();
-console.log('end');
+console.log('end', new Date());
