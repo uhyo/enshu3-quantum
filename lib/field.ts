@@ -130,7 +130,7 @@ class Field {
             throw new Error('sum is 0!!!!!!!');
         }
         const sinv = 1 / Math.sqrt(sum);
-        if(Math.abs(sinv - 1) < 1e-10){
+        if(Math.abs(sinv - 1) < 1e-6){
             // 差が微小のときは省略
             return coeff;
         }

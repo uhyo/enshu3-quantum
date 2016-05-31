@@ -39,7 +39,7 @@ const filestream = fs.createWriteStream(OUTPATH, {
 for(let N = 1; N <= MAXN; N++){
     console.log(`===== ${N} =====`);
     // サンプル数
-    const iter = Math.max(4, Math.floor(N**2));
+    const iter = Math.max(16, 2*Math.floor(N**2));
 
     // Fieldを初期化
     const director = (d: Map<number, Complex>)=>{
