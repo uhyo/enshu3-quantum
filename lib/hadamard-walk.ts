@@ -5,8 +5,7 @@ import {
 import Field, {
     State,
     ICoeff,
-    STATE_DIR,
-    STATE_POS,
+    makeState,
 } from './field';
 import {
     Complex,
@@ -29,15 +28,15 @@ const OUTPATH = './data.txt';
 
 //Hadamard operatorを左からかける（係数無視）
 const director = (d: Map<number, Complex>)=>{
-    const dl = d.get(-1, czero);
+    const dl = d.get(0, czero);
     const dr = d.get(1, czero);
     return Map<number, Complex>()
-           .set(-1, cadd(dl, dr))
+           .set(0, cadd(dl, dr))
            .set(1, cadd(dl, csmul(-1, dr)));
 }
 const transition = (a:number, v:number)=>{
-    // vをa方向に動かす(a: -1, 1)
-    return a + v;
+    // vをa方向に動かす(a: 0=L, 1=R)
+    return v - 1 + 2*a;
 };
 
 // 結果出力先ファイルをオープン
@@ -49,7 +48,7 @@ const filestream = fs.createWriteStream(OUTPATH, {
 const f = new Field(director, transition);
 
 // 初期状態
-const coeff = Map<State, Complex>().set(f.makeState(1, 0), cone) as ICoeff;
+const coeff = Map<State, Complex>().set(makeState(1, 0), cone) as ICoeff;
 
 
 // absorbing vertexが-20から20くらいまで
@@ -62,7 +61,9 @@ for(let m of ms){
     // 確率を求める
     let cnt = 0;
     for(let i=0; i<iter; i++){
-        console.log(i);
+        if(i%50===0){
+            console.log(i);
+        }
         f.init(coeff);
         if(f.test(m, 80) >= 0){
             cnt++;

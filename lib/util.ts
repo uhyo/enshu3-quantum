@@ -5,7 +5,8 @@ import {
 import {
     ICoeff,
     State,
-    STATE_POS,
+    getDir,
+    getPos,
 } from './field';
 import {
     Complex,
@@ -16,7 +17,7 @@ import {
 // coeffを位置ごとにまとめる
 
 export function positionalDistribution(coeff: ICoeff): Map<number, Complex>{
-    return coeff.groupBy((r: Complex, k: State)=> k.get(STATE_POS))
+    return coeff.groupBy((r: Complex, k: State)=> getDir(k))
     .map((v: Iterable<State, Complex>)=> v.reduce((acc: Complex, r: Complex)=> cadd(acc, r), czero))
     .toMap();
 }

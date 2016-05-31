@@ -16,13 +16,21 @@ import {
 } from './complex';
 
 // direction, position
-export type State = Map<string, number>;
+// export type State = Map<string, number>;
+export type State = number;
 export type ICoeff = Map<State, Complex>;
 
-// stateの要素（方向）
-export const STATE_DIR = 'dir';
-// stateの要素（位置）
-export const STATE_POS = 'pos';
+// state
+export function makeState(dir: number, pos:number): State{
+    // dirが8bit, posが24bit（負の数OK）でおさまるという仮定
+    return (pos << 8) | dir;
+}
+export function getDir(k: State): number{
+    return k & 0xFF;
+}
+export function getPos(k: State): number{
+    return k >> 8;
+}
 
 class Field {
     // Positional amplitude.
@@ -43,14 +51,6 @@ class Field {
         this.normalize(this.coeff);
     }
 
-    // state
-    public makeState(dir: number, pos:number): State{
-        return Map<string, number>({
-            [STATE_DIR]: dir,
-            [STATE_POS]: pos,
-        });
-    }
-
     // 1ステップ歩く
     public walk(): void{
         // 現在の状態
@@ -66,8 +66,8 @@ class Field {
         coeff.forEach((r: Complex, k: State)=>{
             // k: |a, v>, r: |a, v>の係数
 
-            const a = k.get(STATE_DIR);
-            const v = k.get(STATE_POS);
+            const a = getDir(k);
+            const v = getPos(k);
 
             // まずdirectorを適用
             const d = Map<number, Complex>().set(a, cone);
@@ -75,7 +75,7 @@ class Field {
             // d2のkeyの数だけ分離
             d2.forEach((ra: Complex, a: number)=>{
                 // 確率を追加
-                const k2 = this.makeState(a, transition(a, v));
+                const k2 = makeState(a, transition(a, v));
                 const r2 = cmul(r, ra);
                 coeff2m.set(k2, cadd(r2, coeff2m.get(k2, czero)));
             });
@@ -91,7 +91,8 @@ class Field {
 
         // 現在位置mのやつの確率振幅合計
         const atm = coeff.filter((r: Complex, k: State)=>{
-            return k.get(STATE_POS)===m;
+            // return k.get(STATE_POS)===m;
+            return getPos(k) === m;
         });
         const p = atm.reduce<number>((acc: number, r: Complex)=> acc+cabssq(r) , 0);
 
@@ -102,7 +103,7 @@ class Field {
         }else{
             // mではなかったね……
             this.coeff = this.normalize(coeff.filter((r: Complex, k: State)=>{
-                return k.get(STATE_POS)!==m;
+                return getPos(k)!==m;
             }) as ICoeff);
             return false;
         }

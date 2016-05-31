@@ -5,8 +5,7 @@ import {
 import Field, {
     State,
     ICoeff,
-    STATE_DIR,
-    STATE_POS,
+    makeState,
 } from './field';
 import {
     Complex,
@@ -40,7 +39,7 @@ const filestream = fs.createWriteStream(OUTPATH, {
 for(let N = 1; N <= MAXN; N++){
     console.log(`===== ${N} =====`);
     // サンプル数
-    const iter = Math.max(4, 2*N);
+    const iter = Math.max(4, Math.floor(N**2));
 
     // Fieldを初期化
     const director = (d: Map<number, Complex>)=>{
@@ -65,18 +64,20 @@ for(let N = 1; N <= MAXN; N++){
     const f = new Field(director, transition);
 
     // 初期状態
-    const coeff = Map<State, Complex>().set(f.makeState(0, 0), cone) as ICoeff;
+    const coeff = Map<State, Complex>().set(makeState(0, 0), cone) as ICoeff;
 
     let cnt = 0;
     let steps = 0;
     for(let i=0; i<iter; i++){
         console.log(i);
         // absorbing vertexはランダムにset
-        const m = Math.floor(Math.random() * (2**N));
+        // const m = Math.floor(Math.random() * (2**N));
+        // antipodalな位置
+        const m = (2**N) - 1;
 
         f.init(coeff);
         // step数
-        const s = f.test(m, 120);
+        const s = f.test(m, 180);
 
         if(s >= 0){
             cnt++;
