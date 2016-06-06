@@ -21,6 +21,13 @@ export function cadd({re: are, im: aim}:Complex, {re: bre, im: bim}:Complex): Co
     };
 }
 
+export function csub({re: are, im: aim}:Complex, {re: bre, im: bim}:Complex): Complex{
+    return {
+        re: are - bre,
+        im: aim - bim,
+    };
+}
+
 // complex multiplication.
 export function cmul({re: are, im: aim}:Complex, {re: bre, im: bim}:Complex): Complex{
     return {

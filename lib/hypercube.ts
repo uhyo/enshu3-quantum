@@ -6,6 +6,8 @@ import Field, {
     State,
     ICoeff,
     makeState,
+    getDir,
+    getPos,
 } from './field';
 import {
     Complex,
@@ -22,9 +24,11 @@ import {
 declare var require : (path:string)=>any;
 
 const fs = require('fs');
+const path = require('path');
+const appRootPath = require('app-root-path');
 
 // 結果を出力するところ
-const OUTPATH = './data.txt';
+const OUTPATH = path.join(appRootPath.toString(), 'data.txt');
 
 // 次元
 const MAXN = 8;
@@ -42,26 +46,26 @@ for(let N = 1; N <= MAXN; N++){
     const iter = Math.max(16, 2*Math.floor(N**2));
 
     // Fieldを初期化
-    const director = (d: Map<number, Complex>)=>{
-        // Grover's diffusion operator.
-        const result = Map<number, Complex>().asMutable();
-        // 行列×ベクトル
-        for(let i=0; i<N; i++){
-            // 総和
-            let a = czero;
-            for(let j=0; j<N; j++){
-                const dd = i===j ? 2/N-1 : 2/N;
-                a = cadd(a, csmul(dd, d.get(j, czero)));
+    const director = (d: Map<State, Complex>)=>{
+        const result = Map<State, Complex>().asMutable();
+        // 方向
+        for(let a=0; a<N; a++){
+            // 位置
+            for(let v=0, n=2**N; v<n; v++){
+                // Sを適用する前の位置
+                const vb = v ^ (1 << a);
+                // vbの確率はGrover's diffusion operatorをかけて求める
+                let s = czero;
+                for(let b=0; b<N; b++){
+                    const dd = a===b ? 2/N-1 : 2/N;
+                    s = cadd(s, csmul(dd, d.get(makeState(b, vb), czero)));
+                }
+                result.set(makeState(a, v), s);
             }
-            result.set(i, a);
         }
         return result.asImmutable();
-    }
-    const transition = (a:number, v:number)=>{
-        // a: 0, ..., N-1の数字, v: position
-        return v ^ (1 << a);
     };
-    const f = new Field(director, transition);
+    const f = new Field(director);
 
     // 初期状態
     const coeff = Map<State, Complex>().set(makeState(0, 0), cone) as ICoeff;
@@ -71,9 +75,9 @@ for(let N = 1; N <= MAXN; N++){
     for(let i=0; i<iter; i++){
         console.log(i);
         // absorbing vertexはランダムにset
-        // const m = Math.floor(Math.random() * (2**N));
+        const m = Math.floor(Math.random() * (2**N));
         // antipodalな位置
-        const m = (2**N) - 1;
+        // const m = (2**N) - 1;
 
         f.init(coeff);
         // step数

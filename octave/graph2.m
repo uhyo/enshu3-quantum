@@ -1,5 +1,5 @@
-fid = fopen('../data/hypercube-random.txt', 'r', 'native');
-fid2 = fopen('../data/hypercube-antipodal.txt', 'r', 'native');
+fid = fopen('../data/hypercube-random-2.txt', 'r', 'native');
+fid2 = fopen('../data/hypercube-antipodal-2.txt', 'r', 'native');
 
 data = fscanf(fid, '%d %d %f %f',[4, Inf]);
 data2 = fscanf(fid2, '%d %d %f %f',[4, Inf]);

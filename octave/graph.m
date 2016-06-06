@@ -1,4 +1,4 @@
-fid = fopen('../data/hadamard-line-3.txt', 'r', 'native');
+fid = fopen('../data.txt', 'r', 'native');
 
 data = fscanf(fid, '%d %f',[2, Inf]);
 

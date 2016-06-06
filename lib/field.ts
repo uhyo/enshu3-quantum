@@ -36,14 +36,11 @@ class Field {
     // Positional amplitude.
     public coeff: ICoeff;
 
-    // 方向の確率分布の遷移
-    protected director: (ac: Map<number, Complex>, v: number)=> Map<number, Complex>;
-    // sで表されるtransition
-    protected transition: (a:number, v:number)=>number;
+    // walk operator
+    protected director: (coeff: Map<State, Complex>)=> Map<State, Complex>;
 
-    constructor(director, transition){
+    constructor(director){
         this.director = director;
-        this.transition = transition;
     }
     //coeffをinit
     public init(coeff: ICoeff): void{
@@ -56,13 +53,14 @@ class Field {
         // 現在の状態
         const {
             director,
-            transition,
             coeff,
         } = this;
 
         // 次の状態を作る
-        const coeff2m : ICoeff = Map<State, Complex>().asMutable();
+        const coeff2m : ICoeff = director(coeff);
 
+        // const coeff2m : ICoeff = Map<State, Complex>().asMutable();
+        /*
         coeff.forEach((r: Complex, k: State)=>{
             // k: |a, v>, r: |a, v>の係数
 
@@ -80,9 +78,10 @@ class Field {
                 coeff2m.set(k2, cadd(r2, coeff2m.get(k2, czero)));
             });
         });
+        */
 
         // 正規化
-        this.coeff = this.normalize(coeff2m.asImmutable());
+        this.coeff = this.normalize(coeff2m);
     }
 
     public measure(m: number): boolean{
