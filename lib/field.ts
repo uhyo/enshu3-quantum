@@ -37,7 +37,7 @@ class Field {
     public coeff: ICoeff;
 
     // walk operator
-    protected director: (coeff: Map<State, Complex>)=> Map<State, Complex>;
+    protected director: (coeff: Map<State, Complex>, t:number)=> Map<State, Complex>;
 
     constructor(director){
         this.director = director;
@@ -49,7 +49,7 @@ class Field {
     }
 
     // 1ステップ歩く
-    public walk(): void{
+    public walk(t: number): void{
         // 現在の状態
         const {
             director,
@@ -57,7 +57,7 @@ class Field {
         } = this;
 
         // 次の状態を作る
-        const coeff2m : ICoeff = director(coeff);
+        const coeff2m : ICoeff = director(coeff, t);
 
         // const coeff2m : ICoeff = Map<State, Complex>().asMutable();
         /*
@@ -111,7 +111,7 @@ class Field {
     ///// 初期状態から初めて目的の場所にたどり着くかtestする （かかったstep数を返す）
     public test(m: number, iterationNumber:number = 200): number{
         for(let i=0; i<iterationNumber; i++){
-            this.walk();
+            this.walk(i);
             if(this.measure(m)){
                 return i;
             }

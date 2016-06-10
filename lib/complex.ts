@@ -52,6 +52,10 @@ export const cone: Complex = {
     re: 1,
     im: 0,
 };
+export const ci: Complex = {
+    re: 0,
+    im: 1,
+};
 
 // string replesentation.
 export function cstr({re, im}: Complex): string{
