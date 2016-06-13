@@ -33,7 +33,7 @@ const appRootPath = require('app-root-path');
 const OUTPATH = path.join(appRootPath.toString(), 'data.txt');
 
 // 次元
-const MAXN = 10;
+const MAXN = 8;
 
 // 結果出力先ファイルをオープン
 const filestream = fs.createWriteStream(OUTPATH, {

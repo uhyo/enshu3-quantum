@@ -33,7 +33,7 @@ const appRootPath = require('app-root-path');
 const OUTPATH = path.join(appRootPath.toString(), 'data.txt');
 
 // 次元
-const N = 6;
+const N = 7;
 // Hamming distance
 
 // 結果出力先ファイルをオープン
@@ -45,10 +45,10 @@ const filestream = fs.createWriteStream(OUTPATH, {
 // Hamming distance
 const h = N;
 // サンプル数
-const iter = 1000;
+const iter = 3000;
 
 // ステップ数
-const STEPS = 100;
+const STEPS = 150;
 
 // Fieldを初期化
 const director = (d: Map<State, Complex>, t: number)=>{
