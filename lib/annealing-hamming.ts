@@ -33,7 +33,7 @@ const appRootPath = require('app-root-path');
 const OUTPATH = path.join(appRootPath.toString(), 'data.txt');
 
 // 次元
-const MAXN = 10;
+const N = 6;
 
 // 結果出力先ファイルをオープン
 const filestream = fs.createWriteStream(OUTPATH, {
@@ -41,11 +41,11 @@ const filestream = fs.createWriteStream(OUTPATH, {
     defaultEncoding: 'utf8',
 });
 
-// 各次元ごとに計測する
-for(let N = 1; N <= MAXN; N++){
-    console.log(`===== ${N} =====`);
+// 各Hamming distanceごとに計測する
+for(let h = 0; h <= N; h++){
+    console.log(`===== ${h} =====`);
     // サンプル数
-    const iter = Math.max(16, 0.5*Math.floor(N**2));
+    const iter = 100;
 
     // ステップ数
     const STEPS = 180;
@@ -57,6 +57,10 @@ for(let N = 1; N <= MAXN; N++){
         // 量子ゆらぎの定数
         const gt0 = t / STEPS;
         const gt1 = 1 - gt0;
+        /*
+        const gt0 = 1;
+        const gt1 = 0;
+        */
         // const gt = 100 * ((t+1) ** (-1.5)) - 0.1;   // t = 99 で0になる！
 
         // 方向
@@ -68,19 +72,23 @@ for(let N = 1; N <= MAXN; N++){
                 const vb = v ^ (1 << a);
                 // vbの確率はGrover's diffusion operatorをかけて求める
                 let s = czero;
-                for(let b=0; b<N; b++){
-                    const dd = a===b ? 2/N-1 : 2/N;
-                    s = cadd(s, csmul(dd, d.get(makeState(b, vb), czero)));
+                if(gt0 !== 0){
+                    for(let b=0; b<N; b++){
+                        const dd = a===b ? 2/N-1 : 2/N;
+                        s = cadd(s, csmul(dd, d.get(makeState(b, vb), czero)));
+                    }
+                    s = csmul(gt0, s);
                 }
-                s = csmul(gt0, s);
 
                 // ===== H1
-                let s2 = czero;
-                for(let w=0; w<n; w++){
-                    const dd = v===w ? 2/n-1 : 2/n;
-                    s2 = cadd(s2, csmul(dd, d.get(makeState(a, w), czero)));
+                if(gt1 !== 0){
+                    let s2 = czero;
+                    for(let w=0; w<n; w++){
+                        const dd = v===w ? 2/n-1 : 2/n;
+                        s2 = cadd(s2, csmul(dd, d.get(makeState(a, w), czero)));
+                    }
+                    s = cadd(s, cmul(csmul(gt1, ci), s2));
                 }
-                s = cadd(s, cmul(csmul(gt1, ci), s2));
                 result.set(makeState(a, v), s);
             }
         }
@@ -95,10 +103,20 @@ for(let N = 1; N <= MAXN; N++){
     let steps = 0;
     for(let i=0; i<iter; i++){
         console.log(i);
-        // absorbing vertexはランダムにset
+        // absorbing vertexを決める
+        const arr = [];
+        for(let j=0; j<N; j++){
+            arr.push(j);
+        }
+        shuffle(arr);
+        let m = 0;
+        // ランダムにh箇所1を立てる
+        for(let j=0; j<h; j++){
+            m |= (1<<arr[j]);
+        }
         // const m = Math.floor(Math.random() * (2**N));
         // antipodalな位置
-        const m = (2**N) - 1;
+        // const m = (2**N) - 1;
 
         f.init(coeff);
         // step数
@@ -114,9 +132,18 @@ for(let N = 1; N <= MAXN; N++){
     // absorbing time
     const time = steps / cnt / p;
 
-    filestream.write(`${N} ${cnt} ${p} ${time}\n`);
+    filestream.write(`${h} ${cnt} ${p} ${time}\n`);
     console.log(N, p, time);
 }
 
 filestream.end();
 console.log('end', new Date());
+
+function shuffle<T>(arr: Array<T>):void{
+    for(let i=1, l=arr.length; i<l; i++){
+        const r = Math.floor(Math.random()*i);
+        const tmp = arr[r];
+        arr[r] = arr[i];
+        arr[i] = tmp;
+    }
+}
