@@ -14,6 +14,7 @@ import {
     cadd,
     cmul,
     csmul,
+    cabssq,
     czero,
     cone,
     ci,
@@ -24,6 +25,7 @@ import {
 } from './util';
 
 declare var require : (path:string)=>any;
+declare var process: any;
 
 const fs = require('fs');
 const path = require('path');
@@ -33,7 +35,7 @@ const appRootPath = require('app-root-path');
 const OUTPATH = path.join(appRootPath.toString(), 'data.txt');
 
 // 次元
-const N = 7;
+const N = 6;
 // Hamming distance
 
 // 結果出力先ファイルをオープン
@@ -48,19 +50,19 @@ const h = N;
 const iter = 3000;
 
 // ステップ数
-const STEPS = 150;
+const STEPS = 180;
 
 // Fieldを初期化
 const director = (d: Map<State, Complex>, t: number)=>{
     const result = Map<State, Complex>().asMutable();
 
     // 量子ゆらぎの定数
+    /*
     const gt0 = t / STEPS;
     const gt1 = 1 - gt0;
-    /*
-    const gt0 = 0;
-    const gt1 = 1;
     */
+    const gt0 = 1;
+    const gt1 = 0;
 
     // 方向
     for(let a=0; a<N; a++){
@@ -130,6 +132,18 @@ for(let i=0; i<iter; i++){
     }else{
         dist[STEPS]++;
     }
+
+    //分布
+    const d = (f as any).coeff;
+    for(let v=0; v<2**N; v++){
+        let sum = 0;
+        for(let a=0; a<N; a++){
+            const r = d.get(makeState(a, v), czero);
+            sum += cabssq(r);
+        }
+        console.log(('0000000000'+v.toString(2)).slice(-N), sum);
+    }
+    process.exit(0);
 }
 //ファイルに出力
 for(let i=0; i<=STEPS; i++){

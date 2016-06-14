@@ -10,10 +10,11 @@ fid = fopen('../data/steps/6-6.txt', 'r', 'native');
 #fid4 = fopen('../data/steps/6-6-75.txt', 'r', 'native');
 #fid5 = fopen('../data/steps/6-6-50.txt', 'r', 'native');
 fid2 = fopen('../data/steps/6-6-w0.txt', 'r', 'native');
+fid3 = fopen('../data/steps/6-6-w1.txt', 'r', 'native');
 
 data = fscanf(fid, '%d %d',[2, Inf]);
 if fid2 >= 0
-	data2 = fscanf(fid2, '%d %d',[2, Inf]);
+	data2 = fscanf(fid2, '%d %d',[2, 180]);
 end
 if fid3 >= 0
 	data3 = fscanf(fid3, '%d %d',[2, Inf]);

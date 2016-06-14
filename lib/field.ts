@@ -97,7 +97,7 @@ class Field {
 
         if(Math.random() < p){
             // 観測したらmだったのでmのやつだけ残す
-            this.coeff = atm as ICoeff; // ← ?
+            // this.coeff = atm as ICoeff; // ← ?
             return true;
         }else{
             // mではなかったね……
