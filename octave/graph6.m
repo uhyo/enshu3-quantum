@@ -4,9 +4,12 @@ fid2=-1;
 fid3=-1;
 fid4=-1;
 fid5=-1;
-#fid = fopen('../data/steps/6-6-150.txt', 'r', 'native');
-fid2 = fopen('../data/steps/8-8.txt', 'r', 'native');
-fid3 = fopen('../data/steps/6-6.txt', 'r', 'native');
+fid = fopen('../data/steps/6-6.txt', 'r', 'native');
+#fid2 = fopen('../data/steps/8-8.txt', 'r', 'native');
+#fid3 = fopen('../data/steps/6-6.txt', 'r', 'native');
+fid2 = fopen('../data/steps/6-6-sqrt.txt', 'r', 'native');
+fid3 = fopen('../data/steps/6-6-square.txt', 'r', 'native');
+fid4 = fopen('../data/steps/6-6-3ji.txt', 'r', 'native');
 
 if fid >= 0
 	data = fscanf(fid, '%d %d',[2, Inf]);
@@ -28,13 +31,13 @@ figure(1);
 clf;
 hold on;
 if fid >= 0
-	plot(data(1,:), data(2,:), 'b--', 'linewidth', 2);
+	plot(data(1,:), data(2,:), 'b:', 'linewidth', 4, 'color', [0.2 0.2 0.2]);
 end
 if fid2 >= 0
-	plot(data2(1,:), data2(2,:), 'r-', 'linewidth', 2, 'color', [0.2 0.2 0.2]);
+	plot(data2(1,:), data2(2,:), 'r--', 'linewidth', 1);
 end
 if fid3 >= 0
-	plot(data3(1,:), data3(2,:), 'r--', 'linewidth', 2);
+	plot(data3(1,:), data3(2,:), 'b--', 'linewidth', 1);
 end
 if fid4 >= 0
 	plot(data4(1,:), data4(2,:), 'm-', 'linewidth', 3);

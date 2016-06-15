@@ -57,12 +57,13 @@ const director = (d: Map<State, Complex>, t: number)=>{
     const result = Map<State, Complex>().asMutable();
 
     // 量子ゆらぎの定数
-    /*
-    const gt0 = t / STEPS;
+    const tt = t / STEPS;
+    const gt0 = (808/75 * tt*tt*tt) - 16.4*tt*tt + 497/75 * tt;
     const gt1 = 1 - gt0;
-    */
+    /*
     const gt0 = 1;
     const gt1 = 0;
+    */
 
     // 方向
     for(let a=0; a<N; a++){
@@ -134,6 +135,7 @@ for(let i=0; i<iter; i++){
     }
 
     //分布
+    /*
     const d = (f as any).coeff;
     for(let v=0; v<2**N; v++){
         let sum = 0;
@@ -144,6 +146,7 @@ for(let i=0; i<iter; i++){
         console.log(('0000000000'+v.toString(2)).slice(-N), sum);
     }
     process.exit(0);
+    */
 }
 //ファイルに出力
 for(let i=0; i<=STEPS; i++){
